@@ -1,0 +1,20 @@
+# never commit personal data
+*.heic
+*.HEIC
+*.jpg
+*.jpeg
+*.png
+*.dng
+*.zip
+calib.json
+refined.json
+out/
+horizon_out/
+horizon.csv
+horizon_stellarium.txt
+!example/horizon.csv
+.env
+*.pem
+observer.*
+.venv/
+__pycache__/

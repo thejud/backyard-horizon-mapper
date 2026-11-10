@@ -1,0 +1,634 @@
+[
+ {
+  "name": "M1",
+  "type": "SNR",
+  "filter": "LP",
+  "size": 6,
+  "ra": 83.6324,
+  "dec": 22.0174
+ },
+ {
+  "name": "M8",
+  "type": "emission",
+  "filter": "LP",
+  "size": 90,
+  "ra": 270.90416667,
+  "dec": -24.38666667
+ },
+ {
+  "name": "M13",
+  "type": "globular",
+  "filter": "IRCUT",
+  "size": 20,
+  "ra": 250.423475,
+  "dec": 36.46131944
+ },
+ {
+  "name": "M16",
+  "type": "emission",
+  "filter": "LP",
+  "size": 35,
+  "ra": 274.688,
+  "dec": -13.792
+ },
+ {
+  "name": "M17",
+  "type": "emission",
+  "filter": "LP",
+  "size": 40,
+  "ra": 275.19583333,
+  "dec": -16.17166667
+ },
+ {
+  "name": "M20",
+  "type": "emission+refl",
+  "filter": "LP",
+  "size": 28,
+  "ra": 270.675,
+  "dec": -22.97166667
+ },
+ {
+  "name": "M27",
+  "type": "planetary",
+  "filter": "LP",
+  "size": 8,
+  "ra": 299.90151327,
+  "dec": 22.72119779
+ },
+ {
+  "name": "M31",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 180,
+  "ra": 10.68470833,
+  "dec": 41.26875
+ },
+ {
+  "name": "M32",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 8,
+  "ra": 10.67427,
+  "dec": 40.86517
+ },
+ {
+  "name": "M33",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 70,
+  "ra": 23.46206906,
+  "dec": 30.66017511
+ },
+ {
+  "name": "M42",
+  "type": "emission",
+  "filter": "LP",
+  "size": 65,
+  "ra": 83.8201,
+  "dec": -5.3876
+ },
+ {
+  "name": "M43",
+  "type": "emission",
+  "filter": "LP",
+  "size": 20,
+  "ra": 83.87916667,
+  "dec": -5.27
+ },
+ {
+  "name": "M45",
+  "type": "reflection",
+  "filter": "IRCUT",
+  "size": 110,
+  "ra": 56.60083333,
+  "dec": 24.11388889
+ },
+ {
+  "name": "M51",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 11,
+  "ra": 202.469575,
+  "dec": 47.19525833
+ },
+ {
+  "name": "M57",
+  "type": "planetary",
+  "filter": "LP",
+  "size": 4,
+  "ra": 283.39623652,
+  "dec": 33.02913425
+ },
+ {
+  "name": "M63",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 12,
+  "ra": 198.95530912,
+  "dec": 42.02936891
+ },
+ {
+  "name": "M64",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 10,
+  "ra": 194.18206667,
+  "dec": 21.68265833
+ },
+ {
+  "name": "M65",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 10,
+  "ra": 169.73295194,
+  "dec": 13.09230575
+ },
+ {
+  "name": "M66",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 9,
+  "ra": 170.0626,
+  "dec": 12.9915
+ },
+ {
+  "name": "M74",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 10,
+  "ra": 24.17393802,
+  "dec": 15.78364098
+ },
+ {
+  "name": "M81",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 27,
+  "ra": 148.8882194,
+  "dec": 69.06529514
+ },
+ {
+  "name": "M82",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 11,
+  "ra": 148.96845833,
+  "dec": 69.67970278
+ },
+ {
+  "name": "M87",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 8,
+  "ra": 187.70593077,
+  "dec": 12.39112325
+ },
+ {
+  "name": "M97",
+  "type": "planetary",
+  "filter": "LP",
+  "size": 3,
+  "ra": 168.69880123,
+  "dec": 55.01902301
+ },
+ {
+  "name": "M101",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 29,
+  "ra": 210.80242917,
+  "dec": 54.34875
+ },
+ {
+  "name": "M104",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 9,
+  "ra": 189.99763275,
+  "dec": -11.62305449
+ },
+ {
+  "name": "M106",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 18,
+  "ra": 184.74008333,
+  "dec": 47.30371944
+ },
+ {
+  "name": "M3",
+  "type": "globular",
+  "filter": "IRCUT",
+  "size": 18,
+  "ra": 205.54841667,
+  "dec": 28.37727778
+ },
+ {
+  "name": "M5",
+  "type": "globular",
+  "filter": "IRCUT",
+  "size": 23,
+  "ra": 229.63841667,
+  "dec": 2.08102778
+ },
+ {
+  "name": "M15",
+  "type": "globular",
+  "filter": "IRCUT",
+  "size": 18,
+  "ra": 322.49304167,
+  "dec": 12.167
+ },
+ {
+  "name": "M92",
+  "type": "globular",
+  "filter": "IRCUT",
+  "size": 14,
+  "ra": 259.28079167,
+  "dec": 43.13594444
+ },
+ {
+  "name": "M2",
+  "type": "globular",
+  "filter": "IRCUT",
+  "size": 16,
+  "ra": 323.36258333,
+  "dec": -0.82325
+ },
+ {
+  "name": "M35",
+  "type": "cluster",
+  "filter": "IRCUT",
+  "size": 28,
+  "ra": 92.27208333,
+  "dec": 24.33611111
+ },
+ {
+  "name": "M36",
+  "type": "cluster",
+  "filter": "IRCUT",
+  "size": 12,
+  "ra": 84.08416667,
+  "dec": 34.135
+ },
+ {
+  "name": "M37",
+  "type": "cluster",
+  "filter": "IRCUT",
+  "size": 24,
+  "ra": 88.07416667,
+  "dec": 32.545
+ },
+ {
+  "name": "M38",
+  "type": "cluster",
+  "filter": "IRCUT",
+  "size": 21,
+  "ra": 82.16708333,
+  "dec": 35.82388889
+ },
+ {
+  "name": "M44",
+  "type": "cluster",
+  "filter": "IRCUT",
+  "size": 95,
+  "ra": 130.05416667,
+  "dec": 19.62111111
+ },
+ {
+  "name": "M52",
+  "type": "cluster",
+  "filter": "IRCUT",
+  "size": 13,
+  "ra": 351.195,
+  "dec": 61.59
+ },
+ {
+  "name": "M103",
+  "type": "cluster",
+  "filter": "IRCUT",
+  "size": 6,
+  "ra": 23.33916667,
+  "dec": 60.65888889
+ },
+ {
+  "name": "NGC 7000",
+  "type": "emission",
+  "filter": "LP",
+  "size": 120,
+  "ra": 314.69583333,
+  "dec": 44.33
+ },
+ {
+  "name": "IC 5070",
+  "type": "emission",
+  "filter": "LP",
+  "size": 60,
+  "ra": 312.75,
+  "dec": 44.36666667
+ },
+ {
+  "name": "NGC 6992",
+  "type": "SNR",
+  "filter": "LP",
+  "size": 60,
+  "ra": 314.07916667,
+  "dec": 31.74333333
+ },
+ {
+  "name": "NGC 6960",
+  "type": "SNR",
+  "filter": "LP",
+  "size": 70,
+  "ra": 311.40833333,
+  "dec": 30.70833333
+ },
+ {
+  "name": "NGC 6888",
+  "type": "emission",
+  "filter": "LP",
+  "size": 20,
+  "ra": 303.02725787,
+  "dec": 38.35494005
+ },
+ {
+  "name": "IC 1396",
+  "type": "emission",
+  "filter": "LP",
+  "size": 170,
+  "ra": 324.745,
+  "dec": 57.51388889
+ },
+ {
+  "name": "NGC 7635",
+  "type": "emission",
+  "filter": "LP",
+  "size": 15,
+  "ra": 350.20125,
+  "dec": 61.20166667
+ },
+ {
+  "name": "NGC 281",
+  "type": "emission",
+  "filter": "LP",
+  "size": 35,
+  "ra": 13.10458333,
+  "dec": 56.565
+ },
+ {
+  "name": "IC 1805",
+  "type": "emission",
+  "filter": "LP",
+  "size": 60,
+  "ra": 38.21,
+  "dec": 61.47111111
+ },
+ {
+  "name": "IC 1848",
+  "type": "emission",
+  "filter": "LP",
+  "size": 60,
+  "ra": 42.855,
+  "dec": 60.41888889
+ },
+ {
+  "name": "IC 405",
+  "type": "emission",
+  "filter": "LP",
+  "size": 30,
+  "ra": 79.35,
+  "dec": 34.383
+ },
+ {
+  "name": "IC 410",
+  "type": "emission",
+  "filter": "LP",
+  "size": 40,
+  "ra": 80.5,
+  "dec": 33.483
+ },
+ {
+  "name": "IC 443",
+  "type": "SNR",
+  "filter": "LP",
+  "size": 50,
+  "ra": 94.25,
+  "dec": 22.5699996948
+ },
+ {
+  "name": "IC 434",
+  "type": "emission+dark",
+  "filter": "LP",
+  "size": 60,
+  "ra": 85.25,
+  "dec": -2.5
+ },
+ {
+  "name": "NGC 2024",
+  "type": "emission",
+  "filter": "LP",
+  "size": 30,
+  "ra": 85.4292,
+  "dec": -1.8417
+ },
+ {
+  "name": "NGC 2237",
+  "type": "emission",
+  "filter": "LP",
+  "size": 80,
+  "ra": 97.650417,
+  "dec": 4.980722
+ },
+ {
+  "name": "NGC 2264",
+  "type": "emission",
+  "filter": "LP",
+  "size": 60,
+  "ra": 100.21708,
+  "dec": 9.87694
+ },
+ {
+  "name": "NGC 2174",
+  "type": "emission",
+  "filter": "LP",
+  "size": 40,
+  "ra": 92.425,
+  "dec": 20.5
+ },
+ {
+  "name": "NGC 2175",
+  "type": "emission",
+  "filter": "LP",
+  "size": 40,
+  "ra": 92.4125,
+  "dec": 20.48666667
+ },
+ {
+  "name": "IC 2118",
+  "type": "reflection",
+  "filter": "IRCUT",
+  "size": 180,
+  "ra": 75.5,
+  "dec": -7.9
+ },
+ {
+  "name": "NGC 7293",
+  "type": "planetary",
+  "filter": "LP",
+  "size": 15,
+  "ra": 337.41060585,
+  "dec": -20.83715201
+ },
+ {
+  "name": "NGC 253",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 27,
+  "ra": 11.88805833,
+  "dec": -25.2888
+ },
+ {
+  "name": "NGC 891",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 13,
+  "ra": 35.6371125,
+  "dec": 42.34831944
+ },
+ {
+  "name": "NGC 4631",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 15,
+  "ra": 190.53337083,
+  "dec": 32.54151111
+ },
+ {
+  "name": "NGC 5139",
+  "type": "globular",
+  "filter": "IRCUT",
+  "size": 36,
+  "ra": 201.697,
+  "dec": -47.47947222
+ },
+ {
+  "name": "NGC 2392",
+  "type": "planetary",
+  "filter": "LP",
+  "size": 1,
+  "ra": 112.29486308,
+  "dec": 20.91179858
+ },
+ {
+  "name": "IC 342",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 20,
+  "ra": 56.70214167,
+  "dec": 68.09610556
+ },
+ {
+  "name": "NGC 7331",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 10,
+  "ra": 339.26687752,
+  "dec": 34.4157778
+ },
+ {
+  "name": "NGC 6946",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 11,
+  "ra": 308.71805,
+  "dec": 60.15367778
+ },
+ {
+  "name": "NGC 2403",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 22,
+  "ra": 114.21390893,
+  "dec": 65.60268078
+ },
+ {
+  "name": "NGC 4565",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 16,
+  "ra": 189.08668333,
+  "dec": 25.98739167
+ },
+ {
+  "name": "NGC 4725",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 11,
+  "ra": 192.61071515,
+  "dec": 25.50075919
+ },
+ {
+  "name": "NGC 1499",
+  "type": "emission",
+  "filter": "LP",
+  "size": 160,
+  "ra": 60.825,
+  "dec": 36.42166667
+ },
+ {
+  "name": "NGC 4244",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 16,
+  "ra": 184.37357917,
+  "dec": 37.80711111
+ },
+ {
+  "name": "M110",
+  "type": "galaxy",
+  "filter": "IRCUT",
+  "size": 20,
+  "ra": 10.09190515,
+  "dec": 41.68541867
+ },
+ {
+  "name": "IC 63",
+  "type": "emission",
+  "filter": "LP",
+  "size": 10,
+  "ra": 14.75570833,
+  "dec": 60.88827778
+ },
+ {
+  "name": "NGC 7822",
+  "type": "emission",
+  "filter": "LP",
+  "size": 60,
+  "ra": 0.28575,
+  "dec": 67.42138889
+ },
+ {
+  "name": "NGC 1333",
+  "type": "reflection",
+  "filter": "IRCUT",
+  "size": 6,
+  "ra": 52.29708333,
+  "dec": 31.31
+ },
+ {
+  "name": "IC 1318",
+  "type": "emission",
+  "filter": "LP",
+  "size": 120,
+  "ra": 304.2,
+  "dec": 41.95666667
+ },
+ {
+  "name": "NGC 6820",
+  "type": "emission",
+  "filter": "LP",
+  "size": 40,
+  "ra": 295.616375,
+  "dec": 23.08743056
+ }
+]
