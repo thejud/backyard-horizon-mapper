@@ -1,12 +1,12 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["numpy", "pillow", "pillow-heif", "astropy", "scipy", "opencv-python-headless"]
+# dependencies = ["numpy", "pillow", "pillow-heif", "astropy", "scipy", "opencv-python-headless", "pygeomag"]
 # ///
 """
 Refine per-frame compass headings by feature-matching overlapping frames and
 solving a yaw correction per frame (robust least squares), anchored to the Sun.
-Usage: horizon-refine.py <photo_dir> [--out refined.json]
+Usage: horizon-refine.py <photo_dir> [--declination DEG] [--drop A.HEIC,B.HEIC] [--out refined.json]
 """
 import argparse, importlib.util, json, sys
 from pathlib import Path
@@ -38,10 +38,15 @@ def rays(pts, size, fpx, basis):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("dir"); ap.add_argument("--declination", type=float, required=True, help="magnetic declination, deg east")
-    ap.add_argument("--out", default="refined.json"); ap.add_argument("--max-alt", type=float, default=40); ap.add_argument("--drop", default="", help="comma-separated filenames to exclude (bad headings, finger over lens)"); ap.add_argument("--prior", type=float, default=6.0)
+    ap.add_argument("dir")
+    ap.add_argument("--declination", type=float, help="magnetic declination, deg east (default: World Magnetic Model at the photos' GPS)")
+    ap.add_argument("--out", default="refined.json")
+    ap.add_argument("--max-alt", type=float, default=40, help="ignore frames aimed above this altitude (heading unreliable near zenith)")
+    ap.add_argument("--drop", default="", help="comma-separated filenames to exclude (bad headings, finger over lens)")
+    ap.add_argument("--prior", type=float, default=6.0, help="expected compass error (deg); regularises the yaw corrections")
     a = ap.parse_args()
     meta = hc.read_meta(a.dir)
+    a.declination = hc.declination_for(meta, a.declination)
     names = [n for n in sorted(meta) if meta[n].get("AccelerationVector") not in (None, "-") and n.lower().endswith(".heic")]
     # keep frames whose optical axis is below max_alt (azimuth is ill-defined near zenith); drop listed frames
     def centre_alt(n):
@@ -64,7 +69,6 @@ def main():
     matches = []  # (i, j, pts_i, pts_j)
     for ia, na in enumerate(names):
         ba = hc.camera_basis(fr[na]["m"], a.declination)
-        fa = -ba[3] @ np.array([0, 0, 0]) if False else None
         for nb in names[ia + 1:]:
             bb = hc.camera_basis(fr[nb]["m"], a.declination)
             # angular separation of optical axes
@@ -110,7 +114,7 @@ def main():
     print("sun candidate frames:", [names[i] for i, _ in anchors])
 
     nF = len(names)
-    ultra = np.array([fr[n]['fpx'] and float(fr[n]['m']['FOV']) > 90 for n in names])
+    ultra = np.array([float(fr[n]['m']['FOV']) > 90 for n in names])  # ultrawide vs main lens: separate focal scale
 
     def basis_for(i, d):
         m = dict(fr[names[i]]["m"]); m["GPSImgDirection"] = m["GPSImgDirection"] + d
@@ -149,7 +153,7 @@ def main():
     out = {}
     for n in names:
         i = idx[n]
-        out[n] = dict(yaw_corr=float(sol.x[i]), heading_true=float((fr[n]["m"]["GPSImgDirection"] + a.declination + sol.x[i]) % 360), in_graph=i in connected)
+        out[n] = dict(yaw_corr=float(sol.x[i]), heading_true=float((hc.true_heading(fr[n]["m"], a.declination) + sol.x[i]) % 360), in_graph=i in connected)
     print("\nyaw corrections (deg):")
     print(" ".join(f"{n[4:8]}:{out[n]['yaw_corr']:+.1f}" for n in names))
     # sun residuals after refinement

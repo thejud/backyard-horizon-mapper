@@ -1,14 +1,20 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["numpy", "pillow", "pillow-heif", "astropy", "scipy"]
+# dependencies = ["numpy", "pillow", "pillow-heif", "astropy", "scipy", "pygeomag"]
 # ///
 """
 Step 1-2 of backyard horizon mapping: per-frame camera orientation from iPhone
 EXIF (GPSImgDirection + Apple AccelerationVector), pixel -> az/alt mapping, and
 Sun-based azimuth/altitude calibration.
 
-Usage: horizon-calibrate.py <photo_dir> --declination DEG [--out calib.json]
+This step is a diagnostic: it reports how well the raw phone orientation agrees
+with the Sun. horizon-refine.py does not read its output; it recomputes the same
+orientation itself and then corrects it.
+
+Usage: horizon-calibrate.py <photo_dir> [--declination DEG] [--out calib.json]
+
+Requires iPhone HEIC/JPEG originals (Apple AccelerationVector maker-note tag).
 """
 import argparse, json, subprocess, sys
 from pathlib import Path
@@ -50,6 +56,27 @@ def read_meta(d):
     return meta
 
 
+def declination_for(meta, decl=None):
+    """Magnetic declination (deg, east positive): the given value, else the World
+    Magnetic Model at the first photo's GPS position and date."""
+    if decl is not None:
+        return decl
+    from pygeomag import GeoMag
+    m = next(iter(meta.values()))
+    y, mo, d = (int(x) for x in str(m["GPSDateStamp"]).split(":"))
+    decl = GeoMag().calculate(glat=m["GPSLatitude"], glon=m["GPSLongitude"],
+                              alt=m.get("GPSAltitude", 0) / 1000, time=y + (mo - 1) / 12 + d / 365).d
+    print(f"magnetic declination from WMM: {decl:+.1f} deg (override with --declination)")
+    return decl
+
+
+def true_heading(m, decl):
+    """Camera heading relative to true north. iPhones usually record GPSImgDirection
+    against magnetic north (ref "M"), but can record true north ("T")."""
+    h = float(m["GPSImgDirection"])
+    return h if str(m.get("GPSImgDirectionRef", "M")).upper().startswith("T") else h + decl
+
+
 def camera_basis(m, decl):
     """Return (E, N, U, F, R, Up) as device-frame unit vectors, or None if no gravity."""
     acc = m.get("AccelerationVector")
@@ -62,7 +89,7 @@ def camera_basis(m, decl):
     if np.linalg.norm(Fh) < 1e-3:
         return None
     h = Fh / np.linalg.norm(Fh)
-    H = np.radians(m["GPSImgDirection"] + decl)  # true azimuth of camera axis
+    H = np.radians(true_heading(m, decl))  # true azimuth of camera axis
     w = np.cross(Uw, h)
     N = np.cos(H) * h + np.sin(H) * w
     E = np.sin(H) * h - np.cos(H) * w
@@ -107,12 +134,13 @@ def ang_diff(a, b):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("dir")
-    ap.add_argument("--declination", type=float, required=True, help="magnetic declination at your site, deg east (e.g. from NOAA calculator)")
+    ap.add_argument("--declination", type=float, help="magnetic declination at your site, deg east (default: computed from the photos' GPS via the World Magnetic Model)")
     ap.add_argument("--out", default="calib.json")
     ap.add_argument("--min-blob", type=int, default=8, help="min saturated pixels (at 1000px scale)")
     a = ap.parse_args()
 
     meta = read_meta(a.dir)
+    a.declination = declination_for(meta, a.declination)
     first = next(iter(meta.values()))
     loc = EarthLocation(lat=first["GPSLatitude"] * u.deg, lon=first["GPSLongitude"] * u.deg, height=first.get("GPSAltitude", 100) * u.m)
 
@@ -131,7 +159,7 @@ def main():
         basis = camera_basis(m, a.declination)
         if basis is None:
             continue
-        cen_az, cen_alt = pix_to_azalt(np.array([small.size[0] / 2]), np.array([small.size[1] / 2]), *small.size[:1], small.size[1], fpx_small, basis)
+        cen_az, cen_alt = pix_to_azalt(np.array([small.size[0] / 2]), np.array([small.size[1] / 2]), small.size[0], small.size[1], fpx_small, basis)
         sun_az, sun_alt = sun_azalt(m, loc)
         row = dict(file=name, w=W0, h=H0, fov=fov, heading_mag=m["GPSImgDirection"],
                    cen_az=float(cen_az[0]), cen_alt=float(cen_alt[0]), sun_az=float(sun_az), sun_alt=float(sun_alt))

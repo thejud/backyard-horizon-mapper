@@ -6,6 +6,7 @@
 """
 Which targets are imageable tonight given the backyard horizon profile?
 Usage: horizon-visibility.py [--date YYYY-MM-DD] [--horizon horizon.csv] [--min-alt 20] TARGET [TARGET...]
+Site: --lat/--lon/--tz (IANA zone, e.g. America/Denver) or env OBSERVER_LAT/OBSERVER_LON/OBSERVER_TZ.
 TARGET is a name resolvable by astropy/Sesame (e.g. "IC 434", "M45") or "name=ra_deg,dec_deg".
 Reports hour-by-hour alt/az, windows above max(horizon, min-alt) for the ground profile and the
 conservative canopy profile, the Moon, and a no-overlap one-target-at-a-time schedule.
@@ -19,6 +20,8 @@ from astropy.time import Time
 import astropy.units as u
 
 import os
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 
 def load_horizon(p):
@@ -31,30 +34,34 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("targets", nargs="+"); ap.add_argument("--date", default=None)
     ap.add_argument("--horizon", default="horizon.csv")
-    ap.add_argument("--min-alt", type=float, default=20.0); ap.add_argument("--tz", type=float, default=float(os.environ.get("OBSERVER_TZ_OFFSET", "nan")), help="UTC offset hours (or env OBSERVER_TZ_OFFSET)")
+    ap.add_argument("--min-alt", type=float, default=20.0)
+    ap.add_argument("--tz", default=os.environ.get("OBSERVER_TZ"), help="IANA zone, e.g. America/Denver (or env OBSERVER_TZ)")
     ap.add_argument("--step-min", type=int, default=10)
     ap.add_argument("--lat", type=float, default=float(os.environ.get("OBSERVER_LAT", "nan")))
     ap.add_argument("--lon", type=float, default=float(os.environ.get("OBSERVER_LON", "nan")))
     ap.add_argument("--elev", type=float, default=float(os.environ.get("OBSERVER_ELEV", "0")))
     a = ap.parse_args()
-    if any(np.isnan(v) for v in (a.lat, a.lon, a.tz)):
-        ap.error("set --lat/--lon/--tz (or OBSERVER_LAT, OBSERVER_LON, OBSERVER_TZ_OFFSET)")
-    LAT, LON, ELEV = a.lat, a.lon, a.elev
+    if np.isnan(a.lat) or np.isnan(a.lon) or not a.tz:
+        ap.error("set --lat/--lon/--tz (or OBSERVER_LAT, OBSERVER_LON, OBSERVER_TZ)")
+    LAT, LON, ELEV, TZ = a.lat, a.lon, a.elev, ZoneInfo(a.tz)
     az_t, hg, hc = load_horizon(a.horizon)
     loc = EarthLocation(lat=LAT * u.deg, lon=LON * u.deg, height=ELEV * u.m)
-    from datetime import datetime, timedelta, timezone
-    d0 = datetime.strptime(a.date, "%Y-%m-%d") if a.date else datetime.now()
-    # evening local noon -> next local noon
-    t0 = Time(datetime(d0.year, d0.month, d0.day, 12) - timedelta(hours=a.tz))
+    now = datetime.now(TZ)
+    d0 = datetime.strptime(a.date, "%Y-%m-%d") if a.date else (now - timedelta(days=1 if now.hour < 12 else 0)).replace(tzinfo=None)
+    # local noon on the evening's date -> next local noon
+    t0 = Time(datetime(d0.year, d0.month, d0.day, 12, tzinfo=TZ).astimezone(ZoneInfo("UTC")).replace(tzinfo=None))
     times = t0 + np.arange(0, 24 * 60, a.step_min) * u.min
     frame = AltAz(obstime=times, location=loc)
     sun = get_sun(times).transform_to(frame); moon = get_body("moon", times, loc).transform_to(frame)
     dark = sun.alt.deg < -18
     ilum = 0.5 * (1 - np.cos(np.radians((get_body("moon", times[len(times)//2], loc).separation(get_sun(times[len(times)//2])).deg))))
-    print(f"Date: evening of {d0:%Y-%m-%d} (UTC{a.tz:+.0f}); astronomical dark {np.sum(dark) * a.step_min / 60:.1f} h; Moon illumination ~{ilum*100:.0f}%")
-    loc_t = lambda t: (t.to_datetime() + timedelta(hours=a.tz)).strftime("%H:%M")
+    print(f"Date: evening of {d0:%Y-%m-%d} ({a.tz}); astronomical dark {np.sum(dark) * a.step_min / 60:.1f} h; Moon illumination ~{ilum*100:.0f}%")
+    loc_t = lambda t: t.to_datetime(timezone=ZoneInfo("UTC")).astimezone(TZ).strftime("%H:%M")
     dk = np.where(dark)[0]
-    if len(dk): print(f"  dark from {loc_t(times[dk[0]])} to {loc_t(times[dk[-1]])}")
+    if not len(dk):
+        print("  no astronomical darkness this night (Sun never below -18 deg); nothing to report")
+        return
+    print(f"  dark from {loc_t(times[dk[0]])} to {loc_t(times[dk[-1]])}")
     res = {}
     for spec in a.targets:
         if "=" in spec:
@@ -98,4 +105,5 @@ def main():
                 ov = (res[names[i]][1] & res[names[j]][1]).sum() * a.step_min / 60
                 print(f"  windows overlap ({names[i]} vs {names[j]}): {ov:.1f} h")
 
-main()
+if __name__ == "__main__":
+    main()

@@ -14,7 +14,8 @@ Pick Seestar targets for a night, honouring the backyard horizon profile.
 Ranking: hours that are astronomically dark AND above max(horizon(az), --min-alt)
 on the conservative canopy profile (ground profile also shown), with Moon penalty.
 Schedule: one target at a time (dynamic programming, switching penalty).
-Catalog coordinates are resolved once via Sesame and cached in lib/targets_catalog.json.
+Catalog coordinates are resolved once via Sesame and cached in ../targets_catalog.json
+(delete it after editing SEED to rebuild).
 """
 import argparse, json, warnings
 from datetime import datetime, timedelta
@@ -30,6 +31,8 @@ import os
 HERE = Path(__file__).resolve().parent
 CAT = HERE.parent / "targets_catalog.json"
 HORIZON = "horizon.csv"
+# (min, max) target size in arcmin worth framing with each scope; hides objects far too small or large
+SCOPE_SIZE = {"s50": (0, 120), "s30": (3, 200)}
 
 # name, type, filter (LP = dual-band/narrowband; IRCUT = broadband), approx size (arcmin)
 SEED = [
@@ -82,7 +85,7 @@ def main():
     ap.add_argument("--date"); ap.add_argument("--top", type=int, default=15)
     ap.add_argument("--min-alt", type=float, default=20); ap.add_argument("--max-alt", type=float, default=80, help="alt-az mounts struggle near zenith"); ap.add_argument("--horizon", default=str(HORIZON))
     ap.add_argument("--filter", choices=["LP", "IRCUT"]); ap.add_argument("--scope", choices=["s30", "s50"], default=None,
-                    help="s30 = wide field (targets up to ~200'), s50 = ~76'x43' field; hides targets that are far too large/small")
+                    help="s50 (~76'x43' field): hide targets > 120'; s30 (wide field): hide targets > 200' or < 3'")
     ap.add_argument("--name", action="append", help="restrict to these names (repeatable)")
     ap.add_argument("--step-min", type=int, default=10); ap.add_argument("--no-schedule", action="store_true")
     ap.add_argument("--switch-min", type=int, default=30, help="penalty (minutes of imaging) for changing target")
@@ -110,6 +113,9 @@ def main():
     illum = 0.5 * (1 - np.cos(np.radians(elong)))
     ltime = lambda t: t.to_datetime(timezone=ZoneInfo("UTC")).astimezone(TZ).strftime("%H:%M")
     dk = np.where(dark)[0]
+    if not len(dk):
+        print(f"Night of {d:%Y-%m-%d}: no astronomical darkness (Sun never below -18 deg); nothing to schedule")
+        return
     print(f"Night of {d:%Y-%m-%d}: dark {ltime(times[dk[0]])}-{ltime(times[dk[-1]])} ({dark.sum() * a.step_min / 60:.1f} h), Moon {illum*100:.0f}% lit")
 
     az_t, hg, hc = load_horizon(a.horizon)
@@ -117,8 +123,13 @@ def main():
     if a.name:
         want = {n.lower().replace(" ", "") for n in a.name}
         cat = [c for c in cat if c["name"].lower().replace(" ", "") in want]
+        missing = want - {c["name"].lower().replace(" ", "") for c in cat}
+        if missing:
+            print("not in catalog (use horizon-visibility.py for arbitrary objects):", ", ".join(sorted(missing)))
     if a.filter: cat = [c for c in cat if c["filter"] == a.filter]
-    if a.scope == "s50": cat = [c for c in cat if c["size"] <= 120]
+    if a.scope:
+        lo, hi = SCOPE_SIZE[a.scope]
+        cat = [c for c in cat if lo <= c["size"] <= hi]
     stepf = a.step_min / 60
     rows = []
     for c in cat:
@@ -177,4 +188,5 @@ def main():
     if len(set(used)) > 1: print("  note: schedule mixes LP and IRCUT; keep them in separate stacks.")
 
 
-main()
+if __name__ == "__main__":
+    main()
